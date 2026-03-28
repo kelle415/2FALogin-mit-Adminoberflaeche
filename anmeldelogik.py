@@ -10,6 +10,7 @@ Hinweis:
  - wichtig in der json sind in dem punkt email variablen eingesetzt diese müssten 
    ersetzt werden in richtige emails oder in eine .env datei hinzugefügt werden 
  - SMTP- Zugang über Umgebnungsvariablen MAIL_USER und MAIL_PASS 
+ - und ganz wichtig die passwörter für die jeweiligen benutzer sind folgende: 5936 ist 'Na:rc0qyVVy , 1731 ist Ti+<`_LcXp&C , 3117 ist ^LaTSVDbf_90
  - 
 Noch ausstehende ideen:
  - admin menue zum hinzufügen von neuen accounts
