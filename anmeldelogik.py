@@ -18,6 +18,8 @@ Noch ausstehende ideen:
  - sicherheits überarbeitung mit limits von einloggen
  
 """
+import secrets
+import time
 from dotenv import load_dotenv
 import os 
 #import tkinter as tk # aktuell noch nicht benutzt
@@ -28,7 +30,7 @@ from email.message import EmailMessage
 import adminLogik
 import hashlib
 load_dotenv(".env")
-if not os.getenv("Mail_USER"):
+if not os.getenv("MAIL_USER"):
     print("Warnung: .env nicht korrekt gesetzt")
 
 def benutzerPassworddatenLaden():
@@ -49,78 +51,95 @@ def benutzerabfragen():
     abfrage des mitarbeiter codes 
     """
     print("Bitte Gib deinen vierstelligen mitarbeiter code ein: ")
-    return input("Antwort: ")
+    return input("Mitarbeitercode: ")
 
 def passwortabfragen():
     """
     abfrage des mitarbeiterspassword
     """
     print("Bitte gib dein passwort jetzt ein: ")
-    return input("Antwort: ")
+    return input("Passwort: ")
 
 def passwordhash(mitarbeiterpassword):
     return hashlib.sha256(mitarbeiterpassword.encode("utf-8")).hexdigest()
 
-def adminabfrage(benutzerPassword,mitarbeitercode):
+def randomlogik():
     """
-    admin abfrage oder mitarbeiter
+    erstellt eine random zahl (muss noch zeitlich begrenzt werden oder nur einmal verwendbar gemacht werden )
     """
-    if benutzerPassword["Mitarbeitercode"][mitarbeitercode]["Rolle"] == "admin":
-        adminmenue()
-    else:
-        usermenue()
+    zahl = secrets.randbelow(9000) + 1000
+    timestampZahl = time.time()
+    return zahl, timestampZahl
 
-def adminmenue():
-    print("TEst du bist admin")
-    """hier dann vielleicht das neue skript einarbeiten"""
-    adminLogik.ablauf()
-
-def usermenue():
-    print("test du bist user")
-    """und hier die user gui"""
-
-def abgleich(benutzerPassword,mitarbeitercode,mitarbeiterpassword,zahl):
+def abgleich(benutzerPasswordjson):
     """
     abgleich des mitarbeiter  codes mit der json wenn enthalten dann prüfung des passwortes
     dann wird die email in der json abgefragt und in zweifa weiter gereicht
     """
-    passworthash = passwordhash(mitarbeiterpassword)
-    if mitarbeitercode in benutzerPassword["Mitarbeitercode"]:
-        if passworthash == benutzerPassword["Mitarbeitercode"][mitarbeitercode]["Passwort"]:
-            emailadresse = emailauslesen(benutzerPassword,mitarbeitercode) 
-            zweiFa(benutzerPassword,mitarbeitercode,zahl,emailadresse)  
-        else:
-            print("Fehlerhafte Anmeldung")        
-    else:
-        print("Fehlerhafte anmeldung")
 
-def emailauslesen(benutzerPassword,mitarbeitercode):
+    for versuch in range(3):
+        mitarbeitercode = benutzerabfragen()
+        mitarbeiterpassword = passwortabfragen()
+        passworthash = passwordhash(mitarbeiterpassword)
+        if mitarbeitercode in benutzerPasswordjson["Mitarbeitercode"]:
+            if passworthash == benutzerPasswordjson["Mitarbeitercode"][mitarbeitercode]["Passwort"]:
+                emailadresse = emailauslesen(benutzerPasswordjson,mitarbeitercode)
+                erfolg = zweiFa(benutzerPasswordjson,mitarbeitercode,emailadresse) 
+                if erfolg:
+                    return
+                else:
+                    print("Login fehlgeschlagen")
+                    return
+            else:
+                print("Fehlerhafte Anmeldung")        
+        else:
+            print("Fehlerhafte anmeldung")
+    print(f"Du hast die maximale anzahl an versuchen überschritten {versuch +1} ")
+    return
+        
+
+def emailauslesen(benutzerPasswordjson,mitarbeitercode):
     """
     gibt die emailadresse des abgefragten mitarbeiter
     """
-    email_key = benutzerPassword["Mitarbeitercode"][mitarbeitercode]["Email"]
+    email_key = benutzerPasswordjson["Mitarbeitercode"][mitarbeitercode]["Email"]
     email = os.getenv(email_key)
     if not email:
         print(f"Fehler: {email_key} nicht in .env gefunden!")
         return None
     return email
      
-def zweiFa(benutzerPassword,mitarbeitercode,zahl,emailadresse):
+def zweiFa(benutzerPasswordjson,mitarbeitercode,emailadresse):
     """
     ruft emailschicken auf und gleicht den eingegebenen code aus eingabe2fa mit dem randomcode ab(zahl) und prüft auf leer 
     """
     if not emailadresse:
         print("Keine Gültige email gefunden")
-        return
+        return False
 
+    zahl,timestampZahl = randomlogik()
     emailschicken(zahl,emailadresse)
-    code = eingabe2fa()
-    if code is None:
-        return
-    elif zahl == code:
-        login(benutzerPassword,mitarbeitercode)
-    else:
-        print("falsche eingabe")
+
+    for versuch in range(3):
+        code = eingabe2fa()
+
+        if code is None:
+            print("ungültige eingabe")
+            continue
+        
+        aktuelleZahl = time.time()
+        if aktuelleZahl - timestampZahl > 300:
+            print("Code ist abgelaufen")
+            return False
+
+        if zahl == code:
+            login(benutzerPasswordjson,mitarbeitercode)
+            return True
+        else:
+            print("falsche eingabe")
+            
+    print(f"Du hast die maximale anzahl an versuchen überschritten {versuch +1}")
+    return False
 
 def eingabe2fa():
     """
@@ -133,18 +152,30 @@ def eingabe2fa():
         print("Ungültige eingabe")
         return None
 
-def login(benutzerPassword,mitarbeitercode):
+def login(benutzerPasswordjson,mitarbeitercode):
     """
     eventueller anschluss in ein system
     """
     print("Du bist eingeloggt")
-    adminabfrage(benutzerPassword,mitarbeitercode)
-    
-def randomlogik():
+    adminabfrage(benutzerPasswordjson,mitarbeitercode)
+
+def adminabfrage(benutzerPasswordjson,mitarbeitercode):
     """
-    erstellt eine random zahl (muss noch zeitlich begrenzt werden oder nur einmal verwendbar gemacht werden )
+    admin abfrage oder mitarbeiter
     """
-    return random.randint(1000,9999)
+    if benutzerPasswordjson["Mitarbeitercode"][mitarbeitercode]["Rolle"] == "admin":
+        adminmenue()
+    else:
+        usermenue()
+
+def adminmenue():
+    print("TEst du bist admin")
+    """hier dann vielleicht das neue skript einarbeiten"""
+    adminLogik.ablauf()
+
+def usermenue():
+    print("test du bist user")
+    """und hier die user gui"""
 
 def emailschicken(zahl,emailadresse):
     """
@@ -192,10 +223,7 @@ def main():
      - code und passwort werden abgefragt
      - dann startet das eigentliche programm 
     """
-    benutzerPassword = benutzerPassworddatenLaden()
-    zahl = randomlogik()
-    mitarbeitercode = benutzerabfragen()
-    mitarbeiterpassword = passwortabfragen()
-    abgleich(benutzerPassword,mitarbeitercode,mitarbeiterpassword,zahl)
+    benutzerPasswordjson = benutzerPassworddatenLaden()
+    abgleich(benutzerPasswordjson)
 
 main()

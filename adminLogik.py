@@ -5,6 +5,7 @@ import json
 import random
 import string
 import hashlib
+import secrets
 
 def benutzerPassworddatenLaden():
     """
@@ -26,11 +27,11 @@ def menueausgabe():
     print("4. Beenden")
     return str(input("Antwort: "))
 
-def menueverweis(benutzerPassword):
+def menueverweis(benutzerPasswordjson):
     while True:
         menueauswahl = menueausgabe()
         if menueauswahl in ("1","Mitarbeiter eintragen"):
-            mitarbeitereintragen(benutzerPassword)
+            mitarbeitereintragen(benutzerPasswordjson)
         elif menueauswahl in ("2"," Mitarbeiter löschen"):
             ""
         elif menueauswahl in ("3","Logs einsehen"):
@@ -46,10 +47,10 @@ def mitarbeitercodegenerieren():
     """
     return str(random.randint(1000,9999))
 
-def erstelltenCodePruefen(benutzerPassword):
+def erstelltenCodePruefen(benutzerPasswordjson):
     while True:
         mitarbeitercode = mitarbeitercodegenerieren()
-        if mitarbeitercode not in benutzerPassword["Mitarbeitercode"]:
+        if mitarbeitercode not in benutzerPasswordjson["Mitarbeitercode"]:
             return mitarbeitercode
 
 def hashgenerieren(passwort):
@@ -57,7 +58,7 @@ def hashgenerieren(passwort):
     
 def passwortgenerieren():
     zeichen = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(random.choice(zeichen) for _ in range(12))
+    return ''.join(secrets.choice(zeichen) for _ in range(12))
 
 def emailrolleeintragen():
     print("Bitte gib die emailadresse ein: ")
@@ -73,35 +74,35 @@ def envKeyspeichern(envKey,emailadresse):
     with open(".env","a",encoding="utf-8") as f:
         f.write(f'{envKey}="{emailadresse}"\n')
 
-def mitarbeitereintragen(benutzerPassword):
-    mitarbeitercode = erstelltenCodePruefen(benutzerPassword)
+def mitarbeitereintragen(benutzerPasswordjson):
+    mitarbeitercode = erstelltenCodePruefen(benutzerPasswordjson)
     emailadresse,rolle = emailrolleeintragen()
     envKey = envKeyerstellen(mitarbeitercode)
     envKeyspeichern(envKey,emailadresse)
     passwort = passwortgenerieren()
     passworthash = hashgenerieren(passwort)
-    daten = benutzerPassword["Mitarbeitercode"][mitarbeitercode] = {
+    daten = benutzerPasswordjson["Mitarbeitercode"][mitarbeitercode] = {
         "Passwort": passworthash,
         "Email": envKey,
         "Rolle": rolle
     }
-    abfrage(benutzerPassword,mitarbeitercode,passwort,daten)
+    abfrage(benutzerPasswordjson,mitarbeitercode,passwort,daten)
 
-def abfrage(benutzerPassword,mitarbeitercode,passwort,daten):
+def abfrage(benutzerPasswordjson,mitarbeitercode,passwort,daten):
     print(f"Benutzer wird angelegt sind die daten richtig? (J/N) {daten}")
     korrekturfrage = input("Antwort: ")
     if korrekturfrage in ("JA","j","J"):
-        datenspeichern(benutzerPassword)
+        datenspeichern(benutzerPasswordjson)
         print("daten sind gespeichert")
         print(f"das passwort für den neuen Benutzer {mitarbeitercode} ist {passwort} merk dir das")
     elif korrekturfrage in ("Nein","N","n"):
         ""
 
-def datenspeichern(benutzerPassword):
+def datenspeichern(benutzerPasswordjson):
     with open("benutzerPassword.json", "w", encoding="utf-8") as f:
-        json.dump(benutzerPassword, f, indent=4, ensure_ascii=False)
+        json.dump(benutzerPasswordjson, f, indent=4, ensure_ascii=False)
 
 def ablauf():
-    benutzerPassword = benutzerPassworddatenLaden()
+    benutzerPasswordjson = benutzerPassworddatenLaden()
     #logsanmelden = logsladen()
-    menueverweis(benutzerPassword)
+    menueverweis(benutzerPasswordjson)
