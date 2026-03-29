@@ -13,7 +13,7 @@ Hinweis:
  - und ganz wichtig die passwörter für die jeweiligen benutzer sind folgende: 5936 ist 'Na:rc0qyVVy , 1731 ist Ti+<`_LcXp&C , 3117 ist ^LaTSVDbf_90
  - 
 Noch ausstehende ideen:
- - admin menue zum hinzufügen von neuen accounts
+ - 
  - logs mit zeitstempel
  - sicherheits überarbeitung mit limits von einloggen
  
@@ -128,7 +128,7 @@ def eingabe2fa():
     """
     print("Bitte gib den zugeschickten code ein: ")
     try:
-        return int(input(""))
+        return int(input("Antwort: "))
     except ValueError:
         print("Ungültige eingabe")
         return None
@@ -139,7 +139,6 @@ def login(benutzerPassword,mitarbeitercode):
     """
     print("Du bist eingeloggt")
     adminabfrage(benutzerPassword,mitarbeitercode)
-
     
 def randomlogik():
     """
@@ -175,7 +174,6 @@ def emailschicken(zahl,emailadresse):
     msg["To"] = emailadresse 
 
     # 2. Verbindung zum Mailserver herstellen und senden
-    
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             # Einloggen (mit App-Passwort! über os.getenv)
