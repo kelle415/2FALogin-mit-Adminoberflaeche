@@ -44,7 +44,13 @@ def mitarbeitercodegenerieren():
     """
     erstellt eine random vierstellige zahl 
     """
-    return random.randint(1000,9999)
+    return str(random.randint(1000,9999))
+
+def erstelltenCodePruefen(benutzerPassword):
+    while True:
+        mitarbeitercode = mitarbeitercodegenerieren()
+        if mitarbeitercode not in benutzerPassword["Mitarbeitercode"]:
+            return mitarbeitercode
 
 def hashgenerieren(passwort):
     return hashlib.sha256(passwort.encode("utf-8")).hexdigest()
@@ -54,20 +60,29 @@ def passwortgenerieren():
     return ''.join(random.choice(zeichen) for _ in range(12))
 
 def emailrolleeintragen():
-    print("Bitte gib die variable der email adresse ein(passend zum .env)")
+    print("Bitte gib die emailadresse ein: ")
     emailadresse = str(input(""))
     print("Bitte gib die rolle ein (mitarbeiter/admin)")
     rolle = str(input(""))
     return emailadresse,rolle
 
+def envKeyerstellen(mitarbeitercode):
+    return f"Mitarbeiter_{mitarbeitercode}_Email"
+
+def envKeyspeichern(envKey,emailadresse):
+    with open(".env","a",encoding="utf-8") as f:
+        f.write(f'{envKey}="{emailadresse}"\n')
+
 def mitarbeitereintragen(benutzerPassword):
-    mitarbeitercode = mitarbeitercodegenerieren()
+    mitarbeitercode = erstelltenCodePruefen(benutzerPassword)
     emailadresse,rolle = emailrolleeintragen()
+    envKey = envKeyerstellen(mitarbeitercode)
+    envKeyspeichern(envKey,emailadresse)
     passwort = passwortgenerieren()
     passworthash = hashgenerieren(passwort)
     daten = benutzerPassword["Mitarbeitercode"][mitarbeitercode] = {
         "Passwort": passworthash,
-        "Email": emailadresse,
+        "Email": envKey,
         "Rolle": rolle
     }
     abfrage(benutzerPassword,mitarbeitercode,passwort,daten)
@@ -88,5 +103,5 @@ def datenspeichern(benutzerPassword):
 
 def ablauf():
     benutzerPassword = benutzerPassworddatenLaden()
-    logsanmelden = logsladen()
+    #logsanmelden = logsladen()
     menueverweis(benutzerPassword)
