@@ -28,6 +28,7 @@ import random
 import smtplib
 from email.message import EmailMessage
 import adminLogik
+import anmeldelogs
 import hashlib
 load_dotenv(".env")
 if not os.getenv("MAIL_USER"):
@@ -76,7 +77,6 @@ def abgleich(benutzerPasswordjson):
     abgleich des mitarbeiter  codes mit der json wenn enthalten dann prüfung des passwortes
     dann wird die email in der json abgefragt und in zweifa weiter gereicht
     """
-
     for versuch in range(3):
         mitarbeitercode = benutzerabfragen()
         mitarbeiterpassword = passwortabfragen()
@@ -89,15 +89,19 @@ def abgleich(benutzerPasswordjson):
                     return
                 else:
                     print("Login fehlgeschlagen")
+
                     return
             else:
-                print("Fehlerhafte Anmeldung")        
+                print("Fehlerhafte Anmeldung")  
+                event = anmeldelogs.eventabfrage(welches=2)
+                anmeldelogs.logundjson(mitarbeitercode,event)      
         else:
             print("Fehlerhafte anmeldung")
+            event = anmeldelogs.eventabfrage(welches=1)
+            anmeldelogs.logundjson(mitarbeitercode,event)
     print(f"Du hast die maximale anzahl an versuchen überschritten {versuch +1} ")
     return
         
-
 def emailauslesen(benutzerPasswordjson,mitarbeitercode):
     """
     gibt die emailadresse des abgefragten mitarbeiter
@@ -130,15 +134,24 @@ def zweiFa(benutzerPasswordjson,mitarbeitercode,emailadresse):
         aktuelleZahl = time.time()
         if aktuelleZahl - timestampZahl > 300:
             print("Code ist abgelaufen")
+            event = anmeldelogs.eventabfrage(welches=3)
+            anmeldelogs.logundjson(mitarbeitercode,event)
             return False
 
         if zahl == code:
+            event = anmeldelogs.eventabfrage(welches=4)
+            anmeldelogs.logundjson(mitarbeitercode,event)
             login(benutzerPasswordjson,mitarbeitercode)
+
             return True
         else:
             print("falsche eingabe")
+            event = anmeldelogs.eventabfrage(welches=5)
+            anmeldelogs.logundjson(mitarbeitercode,event)
             
     print(f"Du hast die maximale anzahl an versuchen überschritten {versuch +1}")
+    event = anmeldelogs.eventabfrage(welches=6)
+    anmeldelogs.logundjson(mitarbeitercode,event)
     return False
 
 def eingabe2fa():
@@ -164,14 +177,16 @@ def adminabfrage(benutzerPasswordjson,mitarbeitercode):
     admin abfrage oder mitarbeiter
     """
     if benutzerPasswordjson["Mitarbeitercode"][mitarbeitercode]["Rolle"] == "admin":
-        adminmenue()
+        event = anmeldelogs.eventabfrage(welches=7)
+        anmeldelogs.logundjson(mitarbeitercode,event)        
+        adminmenue(mitarbeitercode)
     else:
         usermenue()
 
-def adminmenue():
+def adminmenue(mitarbeitercode):
     print("TEst du bist admin")
     """hier dann vielleicht das neue skript einarbeiten"""
-    adminLogik.ablauf()
+    adminLogik.ablauf(mitarbeitercode)
 
 def usermenue():
     print("test du bist user")

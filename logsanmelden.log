@@ -1,0 +1,23 @@
+ Zeit: 30.03.2026 11:05:29 | Event: 5936 | Code: 2FA_Login_Erfolgreich | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:18:40 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:23:18 | Event: 1211 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:23:29 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:25:04 | Event: 1222 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:30:10 | Event: 1221 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:30:20 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:31:41 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:32:04 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:32:11 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:36:18 | Event: 1221 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:36:24 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:42:54 | Event: 2121 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:53:03 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:53:12 | Event: 1121 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:53:17 | Event: 2222 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 11:59:27 | Event: 1212 | Code: Login_Fehlgeschlagen_Code | IP: 192.178.1.10
+ Zeit: 30.03.2026 12:29:26 | Event: Login_Fehlgeschlagen_Code | Mitarbeitercode: 3636 | IP: 192.178.1.10
+ Zeit: 30.03.2026 12:33:46 | Event: Login_Fehlgeschlagen_Code | Mitarbeitercode: C:\Users\Student\AppData\Local\Python\pythoncore-3.14-64\python.exe d:/MN/Privat/Programmieren/python_privat/pythonlangeweileimunterricht/anmeldelogik.py | IP: 192.178.1.10
+ Zeit: 30.03.2026 12:35:07 | Event: 2FA_Login_Erfolgreich | Mitarbeitercode: 3117 | IP: 192.178.1.10
+ Zeit: 30.03.2026 12:41:09 | Event: 2FA_Login_Erfolgreich | Mitarbeitercode: 3117 | IP: 192.178.1.10
+ Zeit: 30.03.2026 12:41:09 | Event: Admin_Login | Mitarbeitercode: 3117 | IP: 192.178.1.10
+ Zeit: 30.03.2026 12:41:28 | Event: Admin_Aktion_Hinzufügen | Mitarbeitercode: 3117 | IP: 192.178.1.10

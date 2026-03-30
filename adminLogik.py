@@ -1,6 +1,7 @@
 """
 admin skript zum erstellen von passwörtern und neuen nutzern um gehashte passwörter zu benutzten 
 """
+import anmeldelogs
 import json
 import random
 import string
@@ -27,16 +28,22 @@ def menueausgabe():
     print("4. Beenden")
     return str(input("Antwort: "))
 
-def menueverweis(benutzerPasswordjson):
+def menueverweis(benutzerPasswordjson,mitarbeitercode):
     while True:
         menueauswahl = menueausgabe()
         if menueauswahl in ("1","Mitarbeiter eintragen"):
+            event = anmeldelogs.eventabfrage(welches=8)
+            anmeldelogs.logundjson(mitarbeitercode,event)            
             mitarbeitereintragen(benutzerPasswordjson)
         elif menueauswahl in ("2"," Mitarbeiter löschen"):
-            ""
+            event = anmeldelogs.eventabfrage(welches=9)#fehlt noch funktion
+            anmeldelogs.logundjson(mitarbeitercode,event)
         elif menueauswahl in ("3","Logs einsehen"):
-            ""
+            event = anmeldelogs.eventabfrage(welches=10)#fehlt noch funktion
+            anmeldelogs.logundjson(mitarbeitercode,event)            
         elif menueauswahl in ("4", "beenden"):
+            event = anmeldelogs.eventabfrage(welches=11)
+            anmeldelogs.logundjson(mitarbeitercode,event)            
             break
         else:
             print("Fehlerhafte eingabe")
@@ -102,7 +109,7 @@ def datenspeichern(benutzerPasswordjson):
     with open("benutzerPassword.json", "w", encoding="utf-8") as f:
         json.dump(benutzerPasswordjson, f, indent=4, ensure_ascii=False)
 
-def ablauf():
+def ablauf(mitarbeitercode):
     benutzerPasswordjson = benutzerPassworddatenLaden()
     #logsanmelden = logsladen()
-    menueverweis(benutzerPasswordjson)
+    menueverweis(benutzerPasswordjson,mitarbeitercode)
